@@ -1,12 +1,18 @@
+[![Build Status](https://travis-ci.org/junsumida/rack-camel_snake.svg?branch=master)](https://travis-ci.org/junsumida/rack-camel_snake)
+
 # Rack::CamelSnake
 
-TODO: Write a gem description
+Rack::CamelSnake is a Rack middleware to convert keys in a json from camelCase into snake_case, and vice versa.
+
+## Requirement
+
+- ruby 2.0.0 or above
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'rack-camel_snake'
+    gem 'rack-camel_snake', :git => 'https://github.com/junsumida/rack-camel_snake.git'
 
 And then execute:
 
@@ -18,7 +24,12 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Please add `use Rack::CamelSnake` to your `config.ru` file. For example, 
+
+```ruby
+use Rack::CamelSnake
+run YourRackApp
+```
 
 ## Contributing
 
