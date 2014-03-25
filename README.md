@@ -4,6 +4,10 @@
 
 Rack::CamelSnake is a Rack middleware to convert keys in a json from camelCase into snake_case, and vice versa.
 
+## Requirement
+
+- ruby 2.0.0 or above
+
 ## Installation
 
 Add this line to your application's Gemfile:
