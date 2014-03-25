@@ -5,7 +5,7 @@ require 'rack/camel_snake/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "rack-camel_snake"
-  spec.version       = Rack::CamelSnake::VERSION
+  spec.version       = '0.0.1'
   spec.authors       = ["junsumida", "rnakano", "luckypool"]
   spec.email         = ["jun.sumida@mixi.co.jp"]
   spec.summary       = %q{Rack middleware to exchange camel case and snake case}
