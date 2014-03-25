@@ -1,4 +1,3 @@
-require "rack/camel_snake/version"
 require 'json'
 
 module Rack
