@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/junsumida/rack-camel_snake.svg?branch=master)](https://travis-ci.org/junsumida/rack-camel_snake)
+[![Coverage Status](https://coveralls.io/repos/junsumida/rack-camel_snake/badge.png)](https://coveralls.io/r/junsumida/rack-camel_snake)
 
 # Rack::CamelSnake
 
