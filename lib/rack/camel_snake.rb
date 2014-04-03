@@ -50,7 +50,7 @@ module Rack
 
       case args
         when Hash
-          args.reduce({}){ |hash, (key, value)| hash[key_converter.call(key)] = formatter(value, format); hash }
+          args.reduce({}){ |hash, (key, value)| hash.merge(key_converter.call(key) => formatter(value, format)) }
         when Array
           args.reduce([]){ |array, value| array << formatter(value, format) }
         else
