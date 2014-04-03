@@ -1,5 +1,24 @@
 require 'json'
 
+module EnumFormatter
+  # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
+  # format引数に :to_snake, :to_camelを渡すと、応じたフォーマットに変換します
+  def formatter(format)
+    case self
+      when Hash
+        reduce({}){ |hash, (key, value)| hash.merge(format.call(key) => value.formatter(format)) }
+      when Array
+        reduce([]){ |array, value| array << value.formatter(format) }
+      else
+        self
+    end
+  end
+end
+
+[Symbol, String, Numeric, Array, TrueClass, FalseClass, Hash].each do |klass|
+  klass.send(:include, EnumFormatter)
+end
+
 module Rack
   class CamelSnake
     def initialize(app)
@@ -19,7 +38,7 @@ module Rack
     def rewrite_request_body_to_snake(env)
       if env['CONTENT_TYPE'] == 'application/json'
         input = env['rack.input'].read
-        env['rack.input'] = StringIO.new(JSON.dump(formatter(JSON.parse(input), :to_snake)))
+        env['rack.input'] = StringIO.new(JSON.dump(JSON.parse(input).formatter(key_converter(:to_snake))))
       end
     end
 
@@ -29,7 +48,7 @@ module Rack
 
       if response_header['Content-Type'] =~ /application\/json/
         response_body.map!{|chunk|
-          JSON.dump(formatter(JSON.parse(chunk), :to_camel))
+          JSON.dump(JSON.parse(chunk).formatter(key_converter(:to_camel)))
         }
         response_header['Content-Length'] =
             response_body.reduce(0){ |s, i| s + i.bytesize }.to_s
@@ -38,23 +57,10 @@ module Rack
       response
     end
 
-    # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
-    # format引数に :to_snake, :to_camelを渡すと、応じたフォーマットに変換します
-    def formatter(args, format)
-      case_changer = lambda(&method(format))
-
-      key_converter = lambda do |key|
-        key = case_changer.call(key) if key.is_a?(String)
+    def key_converter(format)
+      lambda do |key|
+        key = lambda(&method(format)).call(key) if key.is_a?(String)
         key
-      end
-
-      case args
-        when Hash
-          args.reduce({}){ |hash, (key, value)| hash[key_converter.call(key)] = formatter(value, format); hash }
-        when Array
-          args.reduce([]){ |array, value| array << formatter(value, format) }
-        else
-          args
       end
     end
 

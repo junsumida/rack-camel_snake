@@ -90,15 +90,15 @@ describe Rack::CamelSnake do
 
     context 'given :to_camel' do
       it 'converts keys into camelCase, and the keys should be a string.' do
-        app.send(:formatter, snake_hash,  :to_camel).should eq camel_hash
-        app.send(:formatter, snake_array, :to_camel).should eq camel_array
+        snake_hash.send(:formatter,  app.send(:key_converter, :to_camel)).should eq camel_hash
+        snake_array.send(:formatter, app.send(:key_converter, :to_camel)).should eq camel_array
       end
     end
 
     context 'given :to_snake' do
       it 'converts keys into snake_case, and the keys should be a symbol.' do
-        app.send(:formatter, camel_hash,  :to_snake).should eq snake_hash
-        app.send(:formatter, camel_array, :to_snake).should eq snake_array
+        camel_hash.send(:formatter,  app.send(:key_converter, :to_snake)).should eq snake_hash
+        camel_array.send(:formatter, app.send(:key_converter, :to_snake)).should eq snake_array
       end
     end
   end
