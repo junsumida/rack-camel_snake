@@ -42,7 +42,7 @@ module Rack
     # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
     # format引数に :to_snake, :to_camelを渡すと、応じたフォーマットに変換します
     def formatter(args, format)
-      ycomb[generate_converter.curry.(key_converter.curry.(format))][args]
+      ycomb[generate_converter.curry.call(key_converter.curry.call(format))][args]
     end
 
     def to_camel(string)
@@ -67,8 +67,8 @@ module Rack
 
     def ycomb
       lambda do |f|
-        lambda{|proc| f[lambda{|args| proc[proc][args] }]}[
-            lambda{|proc| f[lambda{|args| proc[proc][args] }]}
+        ->(proc){ f[->(args){ proc[proc][args] }] }[
+            ->(proc){ f[ ->(args){ proc[proc][args] }] }
         ]
       end
     end
@@ -87,6 +87,5 @@ module Rack
         end
       end
     end
-
   end
 end
