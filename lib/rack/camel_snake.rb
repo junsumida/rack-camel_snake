@@ -19,6 +19,7 @@ module Rack
     def rewrite_request_body_to_snake(env)
       if env['CONTENT_TYPE'] == 'application/json'
         input = env['rack.input'].read
+
         env['rack.input'] = StringIO.new(JSON.dump(formatter(JSON.parse(input), :to_snake)))
       end
     end
@@ -41,21 +42,7 @@ module Rack
     # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
     # format引数に :to_snake, :to_camelを渡すと、応じたフォーマットに変換します
     def formatter(args, format)
-      case_changer = lambda(&method(format))
-
-      key_converter = lambda do |key|
-        key = case_changer.call(key) if key.is_a?(String)
-        key
-      end
-
-      case args
-        when Hash
-          args.reduce({}){ |hash, (key, value)| hash.merge(key_converter.call(key) => formatter(value, format)) }
-        when Array
-          args.reduce([]){ |array, value| array << formatter(value, format) }
-        else
-          args
-      end
+      ycomb[generate_converter.curry.(key_converter.curry.(format))][args]
     end
 
     def to_camel(string)
@@ -70,5 +57,36 @@ module Rack
       .tr('-', '_')
       .downcase
     end
+
+    def key_converter
+      lambda do |format, key|
+        key = lambda(&method(format)).call(key) if key.is_a?(String)
+        key
+      end
+    end
+
+    def ycomb
+      lambda do |f|
+        lambda{|proc| f[lambda{|args| proc[proc][args] }]}[
+            lambda{|proc| f[lambda{|args| proc[proc][args] }]}
+        ]
+      end
+    end
+
+    def generate_converter
+      lambda do |converter, f|
+        lambda do |args|
+          case args
+          when Hash
+            args.reduce({}){ |hash, (key, value)| hash.merge(converter.call(key) => f[value]) }
+          when Array
+            args.reduce([]){ |array, value| array << f[value] }
+          else
+            args
+          end
+        end
+      end
+    end
+
   end
 end
