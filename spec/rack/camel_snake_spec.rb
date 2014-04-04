@@ -67,21 +67,6 @@ describe Rack::CamelSnake do
     end
   end
 
-  describe 'to_snake' do
-    it 'convert camel case into snake case' do
-      app.send(:to_snake, 'CamelCase').should eq 'camel_case'
-      app.send(:to_snake, 'CAMELCase').should eq 'camel_case'
-    end
-  end
-
-  describe 'to_camel' do
-    it 'convert snake case into camel case' do
-      %w(_snake_case snake_case snake___case snake_case_).each do |word|
-        app.send(:to_camel, word).should eq 'snakeCase'
-      end
-    end
-  end
-
   describe 'formatter' do
     let!(:snake_hash){ { 'is_done' => 'hoge', 'order' => 1, 'task_title' => 'title' } }
     let!(:camel_hash){ { 'isDone'  => 'hoge', 'order' => 1, 'taskTitle'  => 'title' } }
