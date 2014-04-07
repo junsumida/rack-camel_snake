@@ -1,4 +1,4 @@
-require 'json'
+require 'Oj'
 require_relative '../spec_helper'
 
 describe Rack::CamelSnake do
@@ -6,7 +6,7 @@ describe Rack::CamelSnake do
 
   class MockedApp < Sinatra::Base
     post '/post' do
-      JSON.dump(JSON.parse(request.body.read))
+      Oj.dump(Oj.load(request.body.read))
     end
   end
 
@@ -18,8 +18,8 @@ describe Rack::CamelSnake do
     let(:json){ { isDone:true, order:1, taskTitle:'hoge' } }
 
     it 'receives and returns camelCased json' do
-      post '/post', JSON.dump(json)
-      last_response.body.should eq JSON.dump(json)
+      post '/post', Oj.dump(json)
+      last_response.body.should eq Oj.dump(json)
     end
   end
 
@@ -30,40 +30,40 @@ describe Rack::CamelSnake do
     it 'rewrite request with content_type == json' do
       mock_env_json = {
         'CONTENT_TYPE' => 'application/json',
-        'rack.input' => StringIO.new(JSON.dump(camel))
+        'rack.input' => StringIO.new(Oj.dump(camel))
       }
       app.send(:rewrite_request_body_to_snake, mock_env_json)
-      JSON.parse(mock_env_json['rack.input'].read).should eq snake
+      Oj.load(mock_env_json['rack.input'].read).should eq snake
     end
 
     it 'not rewrite request with another content_type' do
       mock_env_json = {
         'CONTENT_TYPE' => 'text/html',
-        'rack.input' => StringIO.new(JSON.dump(camel))
+        'rack.input' => StringIO.new(Oj.dump(camel))
       }
       app.send(:rewrite_request_body_to_snake, mock_env_json)
-      JSON.parse(mock_env_json['rack.input'].read).should eq camel
+      Oj.load(mock_env_json['rack.input'].read).should eq camel
     end
 
     it 'rewrite response with content_type == json' do
       mock_response = [
         200,
         { 'Content-Type' => 'application/json' },
-        [ JSON.dump(snake) ]
+        [ Oj.dump(snake) ]
       ]
       response = app.send(:rewrite_response_body_to_camel, mock_response)
-      JSON.parse(response[2][0]).should eq camel
-      response[1]['Content-Length'].to_i.should eq JSON.dump(camel).bytesize
+      Oj.load(response[2][0]).should eq camel
+      response[1]['Content-Length'].to_i.should eq Oj.dump(camel).bytesize
     end
 
     it 'not rewrite response with another content_type' do
       mock_response = [
         200,
         { 'Content-Type' => 'text/html' },
-        [ JSON.dump(snake) ]
+        [ Oj.dump(snake) ]
       ]
       response = app.send(:rewrite_response_body_to_camel, mock_response)
-      JSON.parse(response[2][0]).should eq snake
+      Oj.load(response[2][0]).should eq snake
     end
   end
 
@@ -90,15 +90,15 @@ describe Rack::CamelSnake do
 
     context 'given :to_camel' do
       it 'converts keys into camelCase, and the keys should be a string.' do
-        snake_hash.send(:formatter,  app.send(:key_converter, :to_camel)).should eq camel_hash
-        snake_array.send(:formatter, app.send(:key_converter, :to_camel)).should eq camel_array
+        app.send(:formatter, snake_hash,  app.send(:key_converter, :to_camel)).should eq camel_hash
+        app.send(:formatter, snake_array, app.send(:key_converter, :to_camel)).should eq camel_array
       end
     end
 
     context 'given :to_snake' do
       it 'converts keys into snake_case, and the keys should be a symbol.' do
-        camel_hash.send(:formatter,  app.send(:key_converter, :to_snake)).should eq snake_hash
-        camel_array.send(:formatter, app.send(:key_converter, :to_snake)).should eq snake_array
+        app.send(:formatter, camel_hash,  app.send(:key_converter, :to_snake)).should eq snake_hash
+        app.send(:formatter, camel_array, app.send(:key_converter, :to_snake)).should eq snake_array
       end
     end
   end
