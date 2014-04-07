@@ -9,7 +9,7 @@ Rack::CamelSnake is a Rack middleware to convert keys in a json from camelCase i
 
 ## Requirement
 
-- ruby 2.0.0 or above
+- ruby 2.1.0 or higher 
 
 ## Installation
 
