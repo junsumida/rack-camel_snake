@@ -1,4 +1,4 @@
-require 'json'
+require 'oj'
 
 module EnumFormatter
   # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
@@ -38,7 +38,7 @@ module Rack
     def rewrite_request_body_to_snake(env)
       if env['CONTENT_TYPE'] == 'application/json'
         input = env['rack.input'].read
-        env['rack.input'] = StringIO.new(JSON.dump(JSON.parse(input).formatter(key_converter(:to_snake))))
+        env['rack.input'] = StringIO.new(Oj.dump(Oj.load(input).formatter(key_converter(:to_snake))))
       end
     end
 
@@ -48,7 +48,7 @@ module Rack
 
       if response_header['Content-Type'] =~ /application\/json/
         response_body.map!{|chunk|
-          JSON.dump(JSON.parse(chunk).formatter(key_converter(:to_camel)))
+          Oj.dump(Oj.load(chunk).formatter(key_converter(:to_camel)))
         }
         response_header['Content-Length'] =
             response_body.reduce(0){ |s, i| s + i.bytesize }.to_s
