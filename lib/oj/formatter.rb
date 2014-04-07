@@ -2,11 +2,11 @@ module Oj
   module Formatter
     refine Oj.singleton_class do
       def camelize(input)
-        dump(CamelSnake::formatter(load(input), :to_camel))
+        dump(CamelSnake.formatter(load(input), :to_camel))
       end
 
       def snakify(input)
-        dump(CamelSnake::formatter(load(input), :to_snake))
+        dump(CamelSnake.formatter(load(input), :to_snake))
       end
     end
   end
@@ -36,9 +36,9 @@ module CamelSnake
 
     case args
       when Hash
-        args.reduce({}){ |hash, (key, value)| hash.merge(key_converter.call(key) => self.formatter(value, format)) }
+        args.reduce({}){ |hash, (key, value)| hash.merge(key_converter.call(key) => formatter(value, format)) }
       when Array
-        args.reduce([]){ |array, value| array << self.formatter(value, format) }
+        args.reduce([]){ |array, value| array << formatter(value, format) }
       else
         args
     end

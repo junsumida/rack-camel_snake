@@ -31,13 +31,12 @@ module Rack
       response_body   = response[2]
 
       if response_header['Content-Type'] =~ /application\/json/
-        response_body.map!{|chunk| Oj.camelize(chunk) }
+        response_body.map!{ |chunk| Oj.camelize(chunk) }
         response_header['Content-Length'] =
             response_body.reduce(0){ |s, i| s + i.bytesize }.to_s
       end
 
       response
     end
-
   end
 end
