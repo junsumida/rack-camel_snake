@@ -1,9 +1,9 @@
 require 'oj'
-require 'oj/formatter'
+require 'rack/camel_snake/refinements'
 
 module Rack
   class CamelSnake
-    using Oj::Formatter
+    using Rack::CamelSnake::Refinements
 
     def initialize(app)
       @app = app
@@ -37,6 +37,21 @@ module Rack
       end
 
       response
+    end
+
+    private
+
+    # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
+    # key_converterにkeyに対して施す処理をlambda等で渡します
+    def self.formatter(args, key_converter)
+      case args
+        when Hash
+          args.reduce({}){ |hash, (key, value)| hash.merge(key_converter.call(key) => formatter(value, key_converter)) }
+        when Array
+          args.reduce([]){ |array, value| array << formatter(value, key_converter) }
+        else
+          args
+      end
     end
   end
 end
