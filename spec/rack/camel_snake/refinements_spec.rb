@@ -1,8 +1,7 @@
-require 'json'
 require_relative '../../spec_helper'
 
 class Mocked
-  using Rack::CamelSnake::Refinements
+  using Rack::CamelSnake::Formatter
 
   def to_camel(string)
     string.to_camel
@@ -13,7 +12,7 @@ class Mocked
   end
 end
 
-describe Rack::CamelSnake::Refinements do
+describe Rack::CamelSnake::Formatter do
   let!(:mocked){ Mocked.new }
 
   describe 'to_camel' do
