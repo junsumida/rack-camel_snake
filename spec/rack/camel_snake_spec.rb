@@ -24,8 +24,8 @@ describe Rack::CamelSnake do
   end
 
   describe 'rewrite_request/response' do
-    let(:camel){ { 'taskTitle' => 'hoge' } }
-    let(:snake){ { 'task_title' => 'hoge' } }
+    let(:camel){ { 'isDone'  => 'hoge', 'order' => 1, 'taskTitle'  => 'title' } }
+    let(:snake){ { 'is_done' => 'hoge', 'order' => 1, 'task_title' => 'title' } }
 
     it 'rewrite request with content_type == json' do
       mock_env_json = {

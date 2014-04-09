@@ -1,9 +1,9 @@
 require 'oj'
-require 'rack/camel_snake/formatter'
+require 'rack/camel_snake/refinements'
 
 module Rack
   class CamelSnake
-    using Rack::CamelSnake::Formatter
+    using Rack::CamelSnake::Refinements
 
     def initialize(app)
       @app = app
