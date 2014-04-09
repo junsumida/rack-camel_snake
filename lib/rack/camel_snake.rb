@@ -39,8 +39,6 @@ module Rack
       response
     end
 
-    private
-
     # hashのkeyがstringの場合、symbolに変換します。hashが入れ子の場合も再帰的に変換します。
     # key_converterにkeyに対して施す処理をlambda等で渡します
     def self.formatter(args, key_converter)

@@ -74,8 +74,8 @@ describe Rack::CamelSnake do
     let!(:camel_hash){ { 'isDone'  => 'hoge', 'order' => 1, 'taskTitle'  => 'title' } }
     let(:snake_array){ [ snake_hash, snake_hash, snake_hash ] }
     let(:camel_array){ [ camel_hash, camel_hash, camel_hash ] }
-    let(:to_camel){ lambda{ |key| key.is_a?(String) ? key.to_camel : key } }
-    let(:to_snake){ lambda{ |key| key.is_a?(String) ? key.to_snake : key } }
+    let(:to_camel){ ->(key){ key.is_a?(String) ? key.to_camel : key } }
+    let(:to_snake){ ->(key){ key.is_a?(String) ? key.to_snake : key } }
 
     context 'given :to_camel' do
       it 'converts keys into camelCase, and the keys should be a string.' do
