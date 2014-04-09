@@ -1,8 +1,7 @@
 module Rack
   class CamelSnake
     module Formatter
-      # hashのkeyを再帰的に変換します。
-      # key_converterにkeyに対して施す処理をlambda等で渡します
+      # hashのkeyを再帰的に変換: blockで変換処理を渡します
       def self.formatter(args)
         key_converter = lambda do |key|
           key.is_a?(String) ? yield(key) : key
