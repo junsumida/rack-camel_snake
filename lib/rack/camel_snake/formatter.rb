@@ -5,9 +5,9 @@ module Rack
       def self.formatter(args, converter)
         case args
           when Hash
-            args.reduce({}){ |hash, (key, value)| hash.merge(converter.call(key) => formatter(value, converter){ yield }) }
+            args.reduce({}){ |hash, (key, value)| hash.merge(converter.call(key) => formatter(value, converter)) }
           when Array
-            args.reduce([]){ |array, value| array << formatter(value, converter){ yield } }
+            args.reduce([]){ |array, value| array << formatter(value, converter) }
           else
             args
         end
