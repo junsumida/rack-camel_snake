@@ -3,8 +3,6 @@ require 'rack/camel_snake/formatter'
 module Rack
   class CamelSnake
     module Refinements
-      extend Rack::CamelSnake::Formatter
-
       refine Oj.singleton_class do
         def camelize(input)
           dump(Rack::CamelSnake::Formatter.formatter(load(input)){ |key| key.to_camel })
