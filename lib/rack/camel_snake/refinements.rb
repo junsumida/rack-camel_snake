@@ -5,11 +5,19 @@ module Rack
     module Refinements
       refine Oj.singleton_class do
         def camelize(input)
-          dump(Rack::CamelSnake::Formatter.formatter(load(input)){ |key| key.to_camel })
+          to_camel = lambda do |key|
+            key.is_a?(String) ? key.to_camel : key
+          end
+
+          dump(Rack::CamelSnake::Formatter.formatter(load(input), to_camel))
         end
 
         def snakify(input)
-          dump(Rack::CamelSnake::Formatter.formatter(load(input)){ |key| key.to_snake })
+          to_snake = lambda do |key|
+            key.is_a?(String) ? key.to_snake : key
+          end
+
+          dump(Rack::CamelSnake::Formatter.formatter(load(input), to_snake))
         end
       end
 
