@@ -24,8 +24,8 @@ describe Rack::CamelSnake do
   end
 
   describe 'rewrite_request/response' do
-    let(:camel){ { 'taskTitle' => 'hoge' } }
-    let(:snake){ { 'task_title' => 'hoge' } }
+    let(:camel){ { 'isDone'  => 'hoge', 'order' => 1, 'taskTitle'  => 'title' } }
+    let(:snake){ { 'is_done' => 'hoge', 'order' => 1, 'task_title' => 'title' } }
 
     it 'rewrite request with content_type == json' do
       mock_env_json = {
@@ -64,42 +64,6 @@ describe Rack::CamelSnake do
       ]
       response = app.send(:rewrite_response_body_to_camel, mock_response)
       JSON.parse(response[2][0]).should eq snake
-    end
-  end
-
-  describe 'to_snake' do
-    it 'convert camel case into snake case' do
-      app.send(:to_snake, 'CamelCase').should eq 'camel_case'
-      app.send(:to_snake, 'CAMELCase').should eq 'camel_case'
-    end
-  end
-
-  describe 'to_camel' do
-    it 'convert snake case into camel case' do
-      %w(_snake_case snake_case snake___case snake_case_).each do |word|
-        app.send(:to_camel, word).should eq 'snakeCase'
-      end
-    end
-  end
-
-  describe 'formatter' do
-    let!(:snake_hash){ { 'is_done' => 'hoge', 'order' => 1, 'task_title' => 'title' } }
-    let!(:camel_hash){ { 'isDone'  => 'hoge', 'order' => 1, 'taskTitle'  => 'title' } }
-    let(:snake_array){ [ snake_hash, snake_hash, snake_hash ] }
-    let(:camel_array){ [ camel_hash, camel_hash, camel_hash ] }
-
-    context 'given :to_camel' do
-      it 'converts keys into camelCase, and the keys should be a string.' do
-        app.send(:formatter, snake_hash,  :to_camel).should eq camel_hash
-        app.send(:formatter, snake_array, :to_camel).should eq camel_array
-      end
-    end
-
-    context 'given :to_snake' do
-      it 'converts keys into snake_case, and the keys should be a symbol.' do
-        app.send(:formatter, camel_hash,  :to_snake).should eq snake_hash
-        app.send(:formatter, camel_array, :to_snake).should eq snake_array
-      end
     end
   end
 
