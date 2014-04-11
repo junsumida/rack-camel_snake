@@ -19,7 +19,7 @@ describe Rack::CamelSnake do
 
     it 'receives and returns camelCased json' do
       post '/post', JSON.dump(json)
-      last_response.body.should eq JSON.dump(json)
+      expect(last_response.body).to eq JSON.dump(json)
     end
   end
 
@@ -33,7 +33,7 @@ describe Rack::CamelSnake do
         'rack.input' => StringIO.new(JSON.dump(camel))
       }
       app.send(:rewrite_request_body_to_snake, mock_env_json)
-      JSON.parse(mock_env_json['rack.input'].read).should eq snake
+      expect(JSON.parse(mock_env_json['rack.input'].read)).to eq snake
     end
 
     it 'not rewrite request with another content_type' do
@@ -42,7 +42,7 @@ describe Rack::CamelSnake do
         'rack.input' => StringIO.new(JSON.dump(camel))
       }
       app.send(:rewrite_request_body_to_snake, mock_env_json)
-      JSON.parse(mock_env_json['rack.input'].read).should eq camel
+      expect(JSON.parse(mock_env_json['rack.input'].read)).to eq camel
     end
 
     it 'rewrite response with content_type == json' do
@@ -52,8 +52,8 @@ describe Rack::CamelSnake do
         [ JSON.dump(snake) ]
       ]
       response = app.send(:rewrite_response_body_to_camel, mock_response)
-      JSON.parse(response[2][0]).should eq camel
-      response[1]['Content-Length'].to_i.should eq JSON.dump(camel).bytesize
+      expect(JSON.parse(response[2][0])).to eq camel
+      expect(response[1]['Content-Length'].to_i).to eq JSON.dump(camel).bytesize
     end
 
     it 'not rewrite response with another content_type' do
@@ -63,7 +63,7 @@ describe Rack::CamelSnake do
         [ JSON.dump(snake) ]
       ]
       response = app.send(:rewrite_response_body_to_camel, mock_response)
-      JSON.parse(response[2][0]).should eq snake
+      expect(JSON.parse(response[2][0])).to eq snake
     end
   end
 

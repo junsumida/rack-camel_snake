@@ -23,15 +23,15 @@ describe Rack::CamelSnake::Formatter do
 
     context 'given snake cases' do
       it 'converts keys into camelCase, and the keys should be a string.' do
-        mocked.to_camel(snake_hash).should eq camel_hash
-        mocked.to_camel(snake_array).should eq camel_array
+        expect(mocked.to_camel(snake_hash)).to eq camel_hash
+        expect(mocked.to_camel(snake_array)).to eq camel_array
       end
     end
 
     context 'given camel cases' do
       it 'converts keys into snake_case, and the keys should be a symbol.' do
-        mocked.to_snake(camel_hash).should eq snake_hash
-        mocked.to_snake(camel_array).should eq snake_array
+        expect(mocked.to_snake(camel_hash)).to eq snake_hash
+        expect(mocked.to_snake(camel_array)).to eq snake_array
       end
     end
   end
