@@ -16,17 +16,18 @@ describe Rack::CamelSnake::Refinements do
   let!(:mocked){ Mocked.new }
 
   describe 'to_camel' do
-    it 'convert snake case into camel case' do
-      %w(_snake_case snake_case snake___case snake_case_).each do |word|
-        mocked.to_camel(word).should eq 'snakeCase'
+    it 'convert snake_case into camelCase' do
+      %w(_camel_case camel_case camel___case camel_case_).each do |word|
+        mocked.to_camel(word).should eq 'camelCase'
       end
     end
   end
 
   describe 'to_snake' do
-    it 'convert camel case into snake case' do
-      mocked.to_snake('CamelCase').should eq 'camel_case'
-      mocked.to_snake('CAMELCase').should eq 'camel_case'
+    it 'convert camelCase into snake_case' do
+      mocked.to_snake('snakeCase').should eq 'snake_case'
+      mocked.to_snake('SnakeCase').should eq 'snake_case'
+      mocked.to_snake('SNAKECase').should eq 'snake_case'
     end
   end
 end
