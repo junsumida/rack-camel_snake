@@ -24,7 +24,7 @@ module Rack
         input = env['rack.input'].read
         snakified = Oj.snakify(input)
         env['rack.input'] = StringIO.new(snakified)
-        env['CONTENT_LENGTH'] = snakified.length
+        env['CONTENT_LENGTH'] = snakified.bytesize
       end
     end
 
