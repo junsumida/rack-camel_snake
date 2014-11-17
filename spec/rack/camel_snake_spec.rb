@@ -65,6 +65,25 @@ describe Rack::CamelSnake do
       response = app.send(:rewrite_response_body_to_camel, mock_response)
       expect(JSON.parse(response[2][0])).to eq snake
     end
+
+    it 'conforms to the Rack spec (only requires the body to respond to `each`)' do
+      class RackCompatibleBody
+        def initialize(str)
+          @str = str
+        end
+        def each
+          yield @str
+        end
+      end
+
+      mock_response = [
+        200,
+        { 'Content-Type' => 'application/json' },
+        RackCompatibleBody.new(JSON.dump(snake))
+      ]
+      response = app.send(:rewrite_response_body_to_camel, mock_response)
+      expect(JSON.parse(response[2][0])).to eq camel
+    end
   end
 
 end
