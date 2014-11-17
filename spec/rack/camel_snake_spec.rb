@@ -30,10 +30,12 @@ describe Rack::CamelSnake do
     it 'rewrite request with content_type == json' do
       mock_env_json = {
         'CONTENT_TYPE' => 'application/json',
+        'CONTENT_LENGTH' => JSON.dump(camel).bytesize,
         'rack.input' => StringIO.new(JSON.dump(camel))
       }
       app.send(:rewrite_request_body_to_snake, mock_env_json)
       expect(JSON.parse(mock_env_json['rack.input'].read)).to eq snake
+      expect(mock_env_json['CONTENT_LENGTH']).to eq JSON.dump(snake).bytesize
     end
 
     it 'not rewrite request with another content_type' do

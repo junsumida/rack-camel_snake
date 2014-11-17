@@ -22,7 +22,9 @@ module Rack
     def rewrite_request_body_to_snake(env)
       if env['CONTENT_TYPE'] == 'application/json'
         input = env['rack.input'].read
-        env['rack.input'] = StringIO.new(Oj.snakify(input))
+        snakified = Oj.snakify(input)
+        env['rack.input'] = StringIO.new(snakified)
+        env['CONTENT_LENGTH'] = snakified.bytesize
       end
     end
 
